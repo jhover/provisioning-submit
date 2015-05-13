@@ -1,10 +1,4 @@
 #!/bin/env python
--   encoding: b64
-    content: CiMgVGhpcyBmaWxlIGNvbnRyb2xzIHRoZSBzdGF0ZSBvZiBTRUxpbnV4...
-    owner: root:root
-    path: /etc/sysconfig/selinux
-    permissions: '0644'
-
 # 
 # Takes in <profile>.yaml template files and embeds content of files into TDL-compilant XML files. 
 #   
@@ -66,7 +60,7 @@ def handlefile(file, outfile= sys.stdout, profdir = None ):
                     sourcefile = "%s/%s" % (profdir, sourcefile)
                 s = open(sourcefile, 'r')
                 of.write("-   path: %s\n" % targetfile )
-                of.write("    encoding: b64\n    owner: root:root\n    permissions: '0644'\n"
+                of.write("    encoding: b64\n    owner: root:root\n    permissions: '0644'\n")
                 encoded = base64.b64encode(s.readlines())
                 of.write("    content: %s\n\n" % encoded)                
                 log.debug('file content length: %d' % len(filecontent))

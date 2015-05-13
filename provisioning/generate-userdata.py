@@ -74,7 +74,8 @@ def handlefiles(files, outfile= sys.stdout, profdir = None ):
         f.close()
         log.debug("Closed yaml file %s" % file)                
     log.debug("Closing output file %s" % outfile)
-    of.close()
+    if outfile != sys.stdout:
+        of.close()
     
 def main():  
     global log 

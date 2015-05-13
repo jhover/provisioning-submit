@@ -1,0 +1,36 @@
+authorized_keys::authorized_keys:
+    John.Hover:
+        key: AAAAB3NzaC1yc2EAAAABIwAAAQEA4qnUbnuRSwG1Y+WO8Jb7qRDH7AdcyJFxqSexRW9pQ8sA8ZriZLR4NvMKTVtnFjEJ1hVPmVB2pNB4iREHZNqZ7E3POMT+81YxCnOcfTACmFxCSwN+IhaRUk93AdStDsM/+vPsShFii7eUU6x4Ykz5zdfBdL9FbV0VZyBVE8owcJiJpDGFRNTczmYVFlvQGZYSXhpnXwWb/N6kofvdyCHzwVJtiSnjaGxaD4SmSkfT/51g65KqN4TdEDhpl/3elqQB2Qhk8ilw960EcUM+ZwFmHQRQCLy7G7dUYnKJZoXhVN6L3GT0hB2OFJToO2YxnM7Lpnid8bWYPSyssUl+eFgATw==
+        type: ssh-rsa
+
+    Sean.McCorkle1:
+        key: AAAAB3NzaC1kc3MAAACBAOZ1588UPio4SOUCRJHwLROVNPzMyntxQ+KC2LaUgMsshOIuInQyh+6PefF92ycJRV2fsd86b1n1TMLZLneKjANodvB4l+jY7AqWfjb0NnctNwKrHn3inAYxHds05scpXilF6BrU+6wNQVFEj4sjvEx8fqlcX9hinSMZztiWCesJAAAAFQCQE0CWKA5q0F4CZ7D7R4Cz8TwsJQAAAIEAyUL3YSrKiFgjzmsrjTtNYr5jFVCUXppUdgTBjewq9JqI0ZzjsvgAeoFwzQHS3H0QgZ3IsRDdMSoG5yZ6/Wul9i/dDg3KksKWC39QZvwgfmpu9CjNC2yZmIr3Z9ttXuN50rlfHF23L5EXNIlnPLS5lzr5yGjQBy6WxD5pUssoCb0AAACBANRDt4pCkW4vw+MmZbvE6qginUDD6XQzoeCenNuGQJtuLQUHY40aaARysERkuqpbLsqqjWwBOldlu5ntfB1xWP0lCVoYAnD2rOc5iOXAJoxNJk4ptt/UtMbkT1d70iXGIZf8SRwhbyLefaWGzTs5hBpskOp9zZUR43nZMDUGaIzt
+        type: ssh-dsa
+
+    Sean.McCorkle2:
+        key: AAAAB3NzaC1kc3MAAACBANeLT8suZpz6S+sWclirRBNIYUOJU38yzIf9LswVudCW/rWahIk24kuIYRfotkrqnJDxNZv0/HJOb3DNs3P1yRUeBX2oe3Ts+2J6CuS7DUAhcJgdj0FDALU5Xbmp1c0dDK3EmAR5oUV2ZjEmp4Mcko+BkSOPV6nK64S6XyMgIEUzAAAAFQDleUehUMekrQqYf981tbsc0juKUQAAAIAoPburla/La9wZ97Dh6MCF0Bt3s2OGLfP6OqryfSwEd0hZIiD0v45P4jfcIR/fvDqV5JijvRn+l0XxaBO3mMicIjfU1RqcfK/f+cqX0WMBDAEpKPpCJ+CZS8n+pvbWyB0LCd+dJGdNk51ogukkPQHimc5Kjow86IKXM693AlTMegAAAIEAl9AMLV6qlpxhOdQF/uzVWL72Mqp5nj0lWqLnK1bs4HIPP1VdVBl3xlxREu4M46m1RiCbC0To4AGjdkLYwcBZXggFdexF95ybX1RXzDvm+EjSW+FfLrxPNdd3MOr2CCL9MZJqr2K+ieYvD355uxvZMGI1QM31NYVuYn1XVowVlZA=
+        type: ssh-dsa
+
+    Xin.Zhao:
+        key: AAAAB3NzaC1yc2EAAAABIwAAAIEAzgZHsVndNrrH/BpyUTBGw/fwrSugwQu2NRhh2RDMn/3gYHrzmhI0E9PLtHQp1+4y90KI0SQVBaEkPQxtavyx2YilxG4pKRKMPDRZ8k/ZZWj+NqbJj0uwPcl8UBP8PWUfJaZDKLcv0e97gBUWGTaa5713Mq4YuPrR7EyO/rkVxMU=
+        type: ssh-rsa
+
+authorized_keys::rolesusers:
+    root:
+        home: "/root"
+        roles:
+            - Role1
+    mccorkle:
+        home: "/home/mccorkle"
+        roles:
+            - Role2
+
+authorized_keys::rolesauth:
+    Role1:
+    - John.Hover
+    - Xin.Zhao
+    - Sean.McCorkle1
+    - Sean.McCorkle2
+    Role2:
+    - Sean.McCorkle1
+    - Sean.McCorkle2

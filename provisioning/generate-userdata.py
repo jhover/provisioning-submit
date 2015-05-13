@@ -36,13 +36,15 @@ import yaml
 
 def handlefiles(files, outfile= sys.stdout, profdir = None ):   
     log.debug("Handling file %s, profdir=%s" % (files, profdir))
+    # prepare output file
     if outfile != sys.stdout:
         of = open(outfile, 'w')
     else:
         of = sys.stdout
     
     of.write("#cloud-config\nwrite_files\n")
-        
+    
+    # for all mapfiles    
     for file in files:
         with open(file, 'r') as f:
             doc = yaml.load(f)
@@ -58,11 +60,16 @@ def handlefiles(files, outfile= sys.stdout, profdir = None ):
                     (filebase, ext) = os.path.splitext(filename)
                     profdir = filebase
                     sourcefile = "%s/%s" % (profdir, sourcefile)
+                # open sourcefile
                 s = open(sourcefile, 'r')
                 of.write("-   path: %s\n" % targetfile )
                 of.write("    encoding: b64\n    owner: root:root\n    permissions: '0644'\n")
                 encoded = base64.b64encode(s.read())
-                of.write("    content: %s\n\n" % encoded)                
+                of.write("    content: %s\n\n" % encoded)
+                s.close()
+                
+        f.close()                
+    
     of.close()
 
 
@@ -127,12 +134,13 @@ def main():
             debug = 1
         elif opt in ("-v", "--verbose"):
             info = 1
+        elif opt in ("-p", "--profile"):
+            profdir = arg
         elif opt in ("-L","--logfile"):
             logfile = arg
         elif opt in ("-o","--outfile"):
             outfile = arg
-        elif opt in ("-p", "--profile"):
-            profdir = arg
+
     
     major, minor, release, st, num = sys.version_info
     FORMAT24="[ %(levelname)s ] %(asctime)s %(filename)s (Line %(lineno)d): %(message)s"

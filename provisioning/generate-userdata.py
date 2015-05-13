@@ -76,21 +76,6 @@ def handlefiles(files, outfile= sys.stdout, profdir = None ):
     log.debug("Closing output file %s" % outfile)
     of.close()
     
-
-
-def ensurefile(filepath, clear = False):
-    log.debug("Ensuring filepath %s" % filepath)
-    filepath = os.path.expandvars(filepath)
-    filepath = os.path.expanduser(filepath)
-    d = os.path.dirname(filepath)
-    if not os.path.exists(d):
-        os.makedirs(d)
-    if not os.path.exists(filepath):
-        open(filepath, 'w').close()
-    elif clear:
-        open(filepath, 'w').close()
-
-
 def main():  
     global log 
     debug = 0
@@ -188,8 +173,6 @@ def main():
     log.info("Handling files with Logfile=%s Outfile=%s and Profile=%s" % (logfile, outfile, profdir))    
     
     if filemaps:
-#        if outfile != sys.stdout:
-#            ensurefile(outfile, clear=True)
         for f in filemaps:
             handlefiles(filemaps, outfile, profdir )
 

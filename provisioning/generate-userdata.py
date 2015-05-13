@@ -34,8 +34,8 @@ import os
 import sys
 import yaml
 
-def handlefile(file, outfile= sys.stdout, profdir = None ):   
-    log.debug("Handling file %s, profdir=%s" % (file, profdir))
+def handlefiles(files, outfile= sys.stdout, profdir = None ):   
+    log.debug("Handling file %s, profdir=%s" % (files, profdir))
     if outfile != sys.stdout:
         of = open(outfile, 'w')
     else:
@@ -179,7 +179,7 @@ def main():
         if outfile != sys.stdout:
             ensurefile(outfile, clear=True)
         for f in filemaps:
-            handlefile(filemap, outfile, profdir )
+            handlefiles(filemaps, outfile, profdir )
 
 
 if __name__ == "__main__":

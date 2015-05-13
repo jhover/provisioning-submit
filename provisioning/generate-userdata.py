@@ -68,6 +68,7 @@ def handlefile(file, outfile= sys.stdout, profdir = None ):
 
 
 def ensurefile(filepath, clear = False):
+    log.debug("Ensuring filepath %s" % filepath)
     filepath = os.path.expandvars(filepath)
     filepath = os.path.expanduser(filepath)
     d = os.path.dirname(filepath)

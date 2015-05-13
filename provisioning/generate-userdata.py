@@ -38,8 +38,10 @@ def handlefiles(files, outfile= sys.stdout, profdir = None ):
     log.debug("Handling file %s, profdir=%s" % (files, profdir))
     # prepare output file
     if outfile != sys.stdout:
+        log.debug("outfile isn't stdout, opening real file...")
         of = open(outfile, 'w')
     else:
+        log.debug("outfile is stdout")
         of = sys.stdout
     
     of.write("#cloud-config\nwrite_files\n")

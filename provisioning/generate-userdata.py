@@ -73,8 +73,8 @@ def handlefiles(files, outfile= sys.stdout, profdir = None ):
                 log.debug("Finished with source %s dest %s" % (sourcefile, targetfile))
         f.close()
         log.debug("Closed yaml file %s" % file)                
-    log.debug("Closing output file %s" % outfile)
     if outfile != sys.stdout:
+        log.debug("Closing output file %s" % outfile)
         of.close()
     
 def main():  

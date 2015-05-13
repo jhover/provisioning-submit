@@ -44,6 +44,7 @@ def handlefiles(files, outfile= sys.stdout, profdir = None ):
     
     of.write("#cloud-config\nwrite_files\n")
     
+    log.debug("Handling input map files %s" % files)
     # for all mapfiles    
     for file in files:
         with open(file, 'r') as f:
@@ -67,10 +68,12 @@ def handlefiles(files, outfile= sys.stdout, profdir = None ):
                 encoded = base64.b64encode(s.read())
                 of.write("    content: %s\n\n" % encoded)
                 s.close()
-                
-        f.close()                
-    
+                log.debug("Finished with source %s dest %s" % (sourcefile, targetfile))
+        f.close()
+        log.debug("Closed yaml file %s" % file)                
+    log.debug("Closing output file %s" % outfile)
     of.close()
+    
 
 
 def ensurefile(filepath, clear = False):

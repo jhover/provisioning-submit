@@ -63,7 +63,6 @@ def handlefiles(files, outfile= sys.stdout, profdir = None ):
                 of.write("    encoding: b64\n    owner: root:root\n    permissions: '0644'\n")
                 encoded = base64.b64encode(s.read())
                 of.write("    content: %s\n\n" % encoded)                
-                log.debug('file content length: %d' % len(filecontent))
     of.close()
 
 

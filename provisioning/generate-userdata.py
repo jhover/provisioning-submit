@@ -44,7 +44,7 @@ def handlefiles(files, outfile= sys.stdout, profdir = None ):
         log.debug("outfile is stdout")
         of = sys.stdout
     
-    of.write("#cloud-config\nwrite_files\n")
+    of.write("#cloud-config\nwrite_files:\n\n")
     
     log.debug("Handling input map files %s" % files)
     # for all mapfiles    

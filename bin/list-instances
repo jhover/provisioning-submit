@@ -1,0 +1,2 @@
+#!/bin/bash
+euca-describe-instances | grep INSTANCE | tr "\t" ":"  | awk -F : '{ print $2, $3, $4, $5, $6, $20}'

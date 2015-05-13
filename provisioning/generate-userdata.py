@@ -171,7 +171,7 @@ def main():
 
     log.debug("%s" %sys.argv)
     filemaps = args
-    log.debug()
+    log.debug("Args = %s" % filemaps)
     log.info("Handling files with Logfile=%s Outfile=%s and Profile=%s" % (logfile, outfile, profdir))    
     
     if filemaps:

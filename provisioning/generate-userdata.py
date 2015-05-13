@@ -176,7 +176,7 @@ def main():
     log.info("Handling files with Logfile=%s Outfile=%s and Profile=%s" % (logfile, outfile, profdir))    
     
     if filemaps:
-        if outfile != sys.stderr:
+        if outfile != sys.stdout:
             ensurefile(outfile, clear=True)
         for f in filemaps:
             handlefile(filemap, outfile, profdir )

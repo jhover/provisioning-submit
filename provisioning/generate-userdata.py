@@ -66,7 +66,11 @@ def handlefiles(files, outfile= sys.stdout, profdir = None ):
                 # open sourcefile
                 s = open(sourcefile, 'r')
                 of.write("-   path: %s\n" % targetfile )
-                of.write("    encoding: b64\n    owner: root:root\n    permissions: '0644'\n")
+                #of.write("    encoding: b64\n    owner: root:root\n    permissions: '0644'\n")
+                #
+                # Files may contain passwords, so maybe they should be readable only by root?
+                #
+                of.write("    encoding: b64\n    owner: root:root\n    permissions: '0600'\n")
                 encoded = base64.b64encode(s.read())
                 of.write("    content: %s\n\n" % encoded)
                 s.close()

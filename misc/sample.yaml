@@ -1,0 +1,95 @@
+#
+# Hiera local.yaml
+# This is intended to be adjusted for *build-time* customizations. 
+#
+
+classes: 
+    - authorized_keys
+    - selinux
+    - htcondor
+    - accounts
+#    - nfs::server 
+    - nfs::client
+
+
+authorized_keys::authorized_keys:
+    John.Hover:
+        key: "AAAAB3NzaC1yc2EAAAABIwAAAQEA4qnUbnuRSwG1Y+WO8Jb7qRDH7AdcyJFxqSexRW9pQ8sA8ZriZLR4NvMKTVtnFjEJ1hVPmVB2pNB4iREHZNqZ7E3POMT+81YxCnOcfTACmFxCSwN+IhaRUk93AdStDsM/+vPsShFii7eUU6x4Ykz5zdfBdL9FbV0VZyBVE8owcJiJpDGFRNTczmYVFlvQGZYSXhpnXwWb/N6kofvdyCHzwVJtiSnjaGxaD4SmSkfT/51g65KqN4TdEDhpl/3elqQB2Qhk8ilw960EcUM+ZwFmHQRQCLy7G7dUYnKJZoXhVN6L3GT0hB2OFJToO2YxnM7Lpnid8bWYPSyssUl+eFgATw=="
+        type: "ssh-rsa"
+
+    Xin.Zhao:
+        key: "AAAAB3NzaC1yc2EAAAABIwAAAIEAzgZHsVndNrrH/BpyUTBGw/fwrSugwQu2NRhh2RDMn/3gYHrzmhI0E9PLtHQp1+4y90KI0SQVBaEkPQxtavyx2YilxG4pKRKMPDRZ8k/ZZWj+NqbJj0uwPcl8UBP8PWUfJaZDKLcv0e97gBUWGTaa5713Mq4YuPrR7EyO/rkVxMU="
+        type: "ssh-rsa"
+
+authorized_keys::rolesusers:
+    root:
+        home: "/root"
+        roles:
+            - Role1
+
+
+authorized_keys::rolesauth:
+    Role1:
+    - John.Hover
+    - Xin.Zhao
+
+
+# racf-htcondor
+# Head node central manager and schedd
+#htcondor::is_execute:  false
+#htcondor::is_submit:   true
+#htcondor::is_manager:  true
+#htcondor::condor_password: 'changeme'
+
+
+# Execute host
+htcondor::is_execute:  true
+htcondor::collector_host: '172.11.0.76'
+htcondor::collector_port:  9618
+htcondor::condor_password: 'emrules'
+#htcondor::randomize_collector_port: false
+
+# deric-accounts
+#######################################################
+accounts::groups:
+    biogroup:
+        gid: 2000
+
+accounts::users:
+    ruda:
+        uid: 3000
+        comment: "Ruda"
+        groups: ["biogroup"]
+        shell: "/bin/bash"
+        pwhash: "$6$mRMkgdPf$FNDZrVrCmKX/moK0CSb0qpIR6bRqUyeaWXVt1qPH.hV5xZ5.dJKr9cKzSl85tnCcneYZE14gFpWvCJYg2mw4p0"
+        ssh_key:
+            type: "ssh-dss"
+            key: "AAAAB3NzaC1kc3MAAACBAKLdq+5bXLmSY9mzA/UrM10z2MTUUHy16RVI+D5TEYzTuo0tSqjtZHQwaS3pvpihBYCIueMAOeulbSp2ZLMYQHPy5HrlDpaNo0NQr3oZOWXTjeKxbHArdkXVhGF2F/e4EkzVJa0N9EDb+l7h7byrvz2UpWzV7BSNkrmULwEPJ91vAAAAFQDRugTQ7b7PbpSQu60Wq5eQ0yM2JQAAAIAk0P/HbL9Kdyf7Aiz6i3tWir4Vzq1BJWrhihJTGkm6GvSAv6Az2/pnz5M/97jrHXBzF9a/bOvjCLNKP3R78AvP964G/iNbtoHwKAfXpJtoVm2Y9Bpzq3c1tFshbNCNyCuUBZpfIK0DjZWXl+/47dPs1EqRZVaaramYnSCC95WpIQAAAIEAgReOSVIrXhNdWImIQdHa5mWfkVZBB8TPCP1FU9CVgjynpVnZrCL5VWZlDd3MO4nvgDA7tNuowCl8zjG6/gT3vAXWW57FVYVCKn4K+zb27kEfuE1/XX/HFF7SkPEZ6eONWvjmnZ9HPRIc7YfrgdUVMhE4T8z7K9MXdAUNh3ALsJI="
+            comment: "ruda.santos@stonybrook.edu"
+    zuanning:
+        uid: 3001
+        comment: "Zuanning"
+        groups: ["biogroup"]
+        shell: "/bin/bash"
+        pwhash: "$6$mRMkgdPf$FNDZrVrCmKX/moK0CSb0qpIR6bRqUyeaWXVt1qPH.hV5xZ5.dJKr9cKzSl85tnCcneYZE14gFpWvCJYg2mw4p0"
+        ssh_key:
+             type: "ssh-dss"
+             key: "AAAAB3NzaC1kc3MAAACBAPYa+Zhc3OW2hQ7mfheAukHN3DU64h3hHVm7Sml54917WTeNI4TKHSZwVYMQwEaurd6PhMiZo7/1UCDROAVJeIEDuUkXAiAmRpkwu80zMu3B4nqv+jbdcnCsgW+uyup+1vYyt3SsbtFL4A8TYwLr2+UGTZeU9cdp7Hzg6vGru/e7AAAAFQCM8LOZIWpB3OrL0oCZhffsQ7XNbQAAAIEArFgvMUINwv8FUbFmDNXnGAd/YVaXSHsoLk3m+2b1m7N55EL0Cg6s3dyUIRrx1iAHBFAz7IDpQPGK5sRn/Iyk6lIUCDe/Z4KaoSRZcekOnMj/WrOUFkaK41lyqKxPblZZlqH9yOEsbynpluxqNtJd7rJsUtsx1npP/Fntf8q9qZwAAACAKNabetyh9p/4bFJhP1GWXGFK7U6+NfGoXMgElY7tD210u/3IoCii5RYdaHZSQszgmk4utu+DYEj5221LxQW76sr2kD6Ke+6Pd2Vqs3Yv2p1GhJxPfzJgmN2W+qUaxXfM3k8/Z9QsingeAExV7ncm6oDyg79smsGDfDg1f7YvxdE="
+             comment: "zuanning.yuan@stonybrook.edu"
+
+
+# echocat-nfs
+# server
+nfs::server::export: 
+    /home/nfs:
+         clients: "172.11.0.0/24(rw,insecure,async,no_root_squash) localhost(rw)"
+         perms: "0777"
+         
+#echocat-nfs 
+# client
+#nfs::client::ensure: "present"
+#nfs::client::mount: 
+#    /home/nfs:
+#        server: '172.11.0.74'
+#        share:  '/home/nfs'
+#        options: 'rw'

@@ -131,6 +131,25 @@ class MyNova:
         print
 
 
+    def delete(self):
+
+        list_servers = nova.servers.list()
+        
+        print "List of available VM instances (servers):"
+        for i in range(len(list_servers)):
+            print "    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_servers[i].name, bcolors.ENDC)
+        
+        index = raw_input("Pick one instance name by typing the index number ")
+        index = int(index)
+        server = list_servers[index-1]
+        print "Deleting VM instance with name %s ..." %server.name
+        server.stop()
+        server.delete()
+
+
+
+
+
 if __name__ == '__main__':
     mynova = MyNova()
     mynova.get_vm_name()

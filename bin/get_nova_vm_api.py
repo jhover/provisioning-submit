@@ -8,6 +8,7 @@
 import commands
 import os
 import pwd
+import sys
 import time
 
 class bcolors:
@@ -56,7 +57,14 @@ class MyImage:
 
 class MyNova:
 
-    def get_vm_name(self):
+    def create(self):
+        self._get_vm_name()
+        self._get_image_id()
+        self._get_ip()
+        self._get_fixed_ip()
+        self._print_messages()
+
+    def _get_vm_name(self):
 
         list_images = []
         
@@ -85,7 +93,7 @@ class MyNova:
 
 
 
-    def get_image_id(self):
+    def _get_image_id(self):
 
         print "Instantiating VM %s ... (it may take a few seconds)" %self.vm_name
         flavor = nova.flavors.find(name='m1.medium')
@@ -105,7 +113,7 @@ class MyNova:
         print "VM %s instantiated, with ID %s" %(self.vm_name, self.vm_id)
         
         
-    def get_ip(self): 
+    def _get_ip(self): 
         
         list_floating_ips = nova.floating_ips.list()
         for ip in list_floating_ips:
@@ -114,13 +122,13 @@ class MyNova:
                 break
 
     
-    def get_fixed_ip(self): 
+    def _get_fixed_ip(self): 
 
         nova.servers.add_floating_ip(self.server, self.ip.ip)
         self.ip = nova.floating_ips.find(ip=self.ip.ip)
         
 
-    def print_messages(self):
+    def _print_messages(self):
 
         print "now you can log into your new VM with command:"
         print "     ssh root@%s" %self.ip.ip
@@ -151,12 +159,20 @@ class MyNova:
 
 
 if __name__ == '__main__':
-    mynova = MyNova()
-    mynova.get_vm_name()
-    mynova.get_image_id()
-    mynova.get_ip()
-    mynova.get_fixed_ip()
-    mynova.print_messages()
+
+    # FIXME!!
+    # this needs to be done properly. Maybe argparse, or similar.
+    # And needs a help message
+
+    nynova = MyNova()
+
+    if sys.argv[1] == 'create':
+        mynova.create()
+    elif sys.argv[1] == 'delete':
+        mynova.delete()
+    else:
+        #FIXME
+        pass
 
 
 

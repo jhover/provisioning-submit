@@ -169,13 +169,17 @@ if __name__ == '__main__':
 
     nynova = MyNova()
 
+    if len(sys.argv) == 1:
+        #FIXME
+        sys.exit()    
+
     if sys.argv[1] == 'create':
         mynova.create()
     elif sys.argv[1] == 'delete':
         mynova.delete()
     else:
         #FIXME
-        pass
+        sys.exit()    
 
 
 

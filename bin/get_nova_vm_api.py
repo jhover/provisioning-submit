@@ -96,6 +96,9 @@ class MyNova:
     def _get_image_id(self):
 
         print "Instantiating VM %s ... (it may take a few seconds)" %self.vm_name
+        # FIXME
+        # right now the Flavor is hardcoded to m1.medium
+        # figure out how to make it variable
         flavor = nova.flavors.find(name='m1.medium')
         self.server = nova.servers.create(self.vm_name, self.image, flavor=flavor)
         

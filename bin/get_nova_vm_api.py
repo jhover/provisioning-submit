@@ -167,7 +167,7 @@ if __name__ == '__main__':
     # this needs to be done properly. Maybe argparse, or similar.
     # And needs a help message
 
-    nynova = MyNova()
+    mynova = MyNova()
 
     if len(sys.argv) == 1:
         #FIXME

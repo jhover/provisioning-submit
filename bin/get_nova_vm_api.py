@@ -160,6 +160,14 @@ class MyNova:
 
 
 
+def usage():
+    print 
+    print 'Tool to facilitate instantiating a VM with nova.'
+    print 'Usage:'
+    print
+    print '$ python get_nova_vm_api.py create|delete'
+    print
+    
 
 if __name__ == '__main__':
 
@@ -169,8 +177,8 @@ if __name__ == '__main__':
 
     mynova = MyNova()
 
-    if len(sys.argv) == 1:
-        #FIXME
+    if len(sys.argv) != 2:
+        usage()
         sys.exit()    
 
     if sys.argv[1] == 'create':

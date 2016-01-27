@@ -6,6 +6,7 @@
 #
 
 import commands
+import logging
 import os
 import pwd
 import sys
@@ -32,7 +33,6 @@ AUTH_URL = os.environ['OS_AUTH_URL']
 # check it before doing anything else
 
 
-
 from novaclient import client
 
 nova = client.Client(VERSION, USERNAME, PASSWORD, PROJECT_ID, AUTH_URL)
@@ -57,6 +57,23 @@ class MyImage:
 
 class MyNova:
 
+    def __init__(self):
+        self._getlogger()
+
+
+    def _getlogger(self):
+
+        self.log = logging.getLogger('main')
+        logStream = logging.StreamHandler()
+        #FORMAT='%(asctime)s (UTC) [ %(levelname)s ] %(name)s %(filename)s:%(lineno)d %(funcName)s(): %(message)s'
+        FORMAT='%(message)s'
+        formatter = logging.Formatter(FORMAT)
+        formatter.converter = time.gmtime  # to convert timestamps to UTC
+        logStream.setFormatter(formatter)
+        self.log.addHandler(logStream)
+        self.log.setLevel(logging.DEBUG)
+
+
     def create(self):
         self._get_vm_name()
         self._get_image_id()
@@ -73,10 +90,9 @@ class MyNova:
             
         list_images.sort()
         
-        print "List of available VM images:"
+        self.log.info("List of available VM images:")
         for i in range(len(list_images)):
-            print "    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_images[i].name, bcolors.ENDC)
-        
+            self.log("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_images[i].name, bcolors.ENDC))
         
         index = raw_input("Pick one image type by typing the index number ")
         index = int(index)
@@ -95,7 +111,7 @@ class MyNova:
 
     def _get_image_id(self):
 
-        print "Instantiating VM %s ... (it may take a few seconds)" %self.vm_name
+        self.log("Instantiating VM %s ... (it may take a few seconds)" %self.vm_name)
         # FIXME
         # right now the Flavor is hardcoded to m1.medium
         # figure out how to make it variable
@@ -113,7 +129,7 @@ class MyNova:
          
             time.sleep(1)
         
-        print "VM %s instantiated, with ID %s" %(self.vm_name, self.vm_id)
+        self.log("VM %s instantiated, with ID %s" %(self.vm_name, self.vm_id))
         
         
     def _get_ip(self): 
@@ -133,27 +149,27 @@ class MyNova:
 
     def _print_messages(self):
 
-        print "now you can log into your new VM with command:"
-        print "     ssh root@%s" %self.ip.ip
-        print
-        print "when finished, delete the VM with commands:"
-        print "     nova stop %s" %self.vm_id
-        print "     nova delete %s" %self.vm_id
-        print
+        self.log("now you can log into your new VM with command:")
+        self.log("     ssh root@%s" %self.ip.ip)
+        self.log("")
+        self.log("when finished, delete the VM with commands:")
+        self.log("     nova stop %s" %self.vm_id)
+        self.log("     nova delete %s" %self.vm_id)
+        self.log("")
 
 
     def delete(self):
 
         list_servers = nova.servers.list()
         
-        print "List of available VM instances (servers):"
+        self.log("List of available VM instances (servers):")
         for i in range(len(list_servers)):
-            print "    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_servers[i].name, bcolors.ENDC)
+            self.log("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_servers[i].name, bcolors.ENDC))
         
         index = raw_input("Pick one instance name by typing the index number ")
         index = int(index)
         server = list_servers[index-1]
-        print "Deleting VM instance with name %s ..." %server.name
+        self.log("Deleting VM instance with name %s ..." %server.name)
         server.stop()
         server.delete()
 
@@ -161,12 +177,14 @@ class MyNova:
 
 
 def usage():
-    print 
-    print 'Tool to facilitate instantiating a VM with nova.'
-    print 'Usage:'
-    print
-    print '$ python get_nova_vm_api.py create|delete'
-    print
+    
+    self.log('')
+    self.log('Tool to facilitate instantiating a VM with nova.')
+    self.log('Usage:')
+    self.log('')
+    self.log('$ python get_nova_vm_api.py create|delete')
+    self.log('')
+    
     
 
 if __name__ == '__main__':

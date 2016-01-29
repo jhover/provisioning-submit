@@ -130,7 +130,7 @@ class MyNova:
         for i in range(len(list_images)):
             self.log.info("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_images[i].name, bcolors.ENDC))
         
-        index = raw_input("Pick one image type by typing the index number ")
+        index = raw_input("Pick one image type by typing the index number: ")
         index = int(index)
         self.image_name = list_images[index-1].name
         self.image_id = list_images[index-1].id
@@ -173,7 +173,7 @@ class MyNova:
         for i in range(len(list_flavors)):
             self.log.info("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_flavors[i].name, bcolors.ENDC))
         
-        index = raw_input("Pick one image flavor by typing the index number ")
+        index = raw_input("Pick one image flavor by typing the index number: ")
         index = int(index)
 
         name = list_flavors[index-1].name
@@ -234,12 +234,13 @@ class MyNova:
         for i in range(len(list_servers)):
             self.log.info("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_servers[i].name, bcolors.ENDC))
         
-        index = raw_input("Pick one instance name by typing the index number ")
+        index = raw_input("Pick one instance name by typing the index number: ")
         index = int(index)
         server = list_servers[index-1]
         self.log.info("Deleting VM instance with name %s ..." %server.name)
         server.stop()
         server.delete()
+        self.log.info("VM instance with name %s deleted" %server.name)
 
 
 
@@ -250,8 +251,7 @@ class MyNova:
 if __name__ == '__main__':
 
     # FIXME!!
-    # this needs to be done properly. Maybe argparse, or similar.
-    # And needs a help message
+    # this needs to be done properly, with argparse, getopt, or similar.
 
     mynova = MyNova()
 

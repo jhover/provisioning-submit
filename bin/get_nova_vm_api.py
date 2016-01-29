@@ -182,7 +182,9 @@ class MyNova:
         #   make 'm1.medium' the default
         flavor = nova.flavors.find(name=name)
         self.server = nova.servers.create(self.vm_name, self.image, flavor=flavor)
-        
+       
+        self.log.info('Instantiating VM... (this step will take a few seconds)')
+ 
         while True:
             self.server = nova.servers.find(name=self.vm_name)
             status = self.server.status
@@ -228,7 +230,7 @@ class MyNova:
 
         list_servers = nova.servers.list()
         
-        self.log.info("List of available VM instances (servers):")
+        self.log.info("List of VM instances (servers) currently running:")
         for i in range(len(list_servers)):
             self.log.info("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_servers[i].name, bcolors.ENDC))
         

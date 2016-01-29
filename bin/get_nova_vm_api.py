@@ -148,9 +148,6 @@ class MyNova:
     def _get_image_id(self):
 
         self.log.info("Instantiating VM %s ... (it may take a few seconds)" %self.vm_name)
-        # FIXME
-        # right now the Flavor is hardcoded to m1.medium
-        # figure out how to make it variable
 
         #
         #   >>> nova.flavors.list()
@@ -166,7 +163,6 @@ class MyNova:
         #   >>> print f.__dict__
         #   {'name': u'm1.tiny', 'links': [{u'href': u'http://192.153.161.7:8774/v2/a629decc3bc8411a83cc210326db829c/flavors/1', u'rel': u'self'}, {u'href': u'http://192.153.161.7:8774/a629decc3bc8411a83cc210326db829c/flavors/1', u'rel': u'bookmark'}], 'ram': 512, 'vcpus': 1, 'id': u'1', 'OS-FLV-DISABLED:disabled': False, 'manager': <novaclient.v1_1.flavors.FlavorManager object at 0x10fced0>, 'swap': u'', 'os-flavor-access:is_public': True, 'rxtx_factor': 1.0, '_info': {u'name': u'm1.tiny', u'links': [{u'href': u'http://192.153.161.7:8774/v2/a629decc3bc8411a83cc210326db829c/flavors/1', u'rel': u'self'}, {u'href': u'http://192.153.161.7:8774/a629decc3bc8411a83cc210326db829c/flavors/1', u'rel': u'bookmark'}], u'ram': 512, u'OS-FLV-DISABLED:disabled': False, u'vcpus': 1, u'swap': u'', u'os-flavor-access:is_public': True, u'rxtx_factor': 1.0, u'OS-FLV-EXT-DATA:ephemeral': 0, u'disk': 1, u'id': u'1'}, 'disk': 1, 'OS-FLV-EXT-DATA:ephemeral': 0, '_loaded': True}
         #   
-
 
         list_flavors = nova.flavors.list()
         self.log.info("List of available image flavors:")

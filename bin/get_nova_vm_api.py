@@ -5,6 +5,31 @@
 #       http://docs.openstack.org/developer/python-novaclient/ref/v2/
 #
 
+#
+#  NOTE
+#   interactive tests
+#   
+#   $ cd /usr/lib/python2.6/site-packages/novaclient
+#   $ python
+#   >>> 
+#   >>> import os
+#   >>> import pwd 
+#   >>> import sys 
+#   >>> import time
+#   >>> 
+#   >>> VERSION = "2" 
+#   >>> USERNAME = os.environ['OS_USERNAME']
+#   >>> PASSWORD = os.environ['OS_PASSWORD']
+#   >>> PROJECT_ID = os.environ['OS_TENANT_NAME']
+#   >>> AUTH_URL = os.environ['OS_AUTH_URL']
+#   >>> 
+#   >>> import client
+#   >>> nova = client.Client(VERSION, USERNAME, PASSWORD, PROJECT_ID, AUTH_URL)
+#   >>> 
+#   >>> print nova.flavors.list()
+#   ...
+#
+
 import commands
 import logging
 import os
@@ -126,7 +151,36 @@ class MyNova:
         # FIXME
         # right now the Flavor is hardcoded to m1.medium
         # figure out how to make it variable
-        flavor = nova.flavors.find(name='m1.medium')
+
+        #
+        #   >>> nova.flavors.list()
+        #   [<Flavor: m1.tiny>, <Flavor: m1.small>, <Flavor: m1.medium>, <Flavor: m1.large>, <Flavor: m1.xlarge>, <Flavor: m1.xlarge.160>, <Flavor: m1.2xlarge.750>, <Flavor: m1.2xlarge.500>, <Flavor: m1.2xlarge.700>]
+        #
+        #   >>> f = nova.flavors.list()[0]
+        #   >>> print f
+        #   <Flavor: m1.tiny>
+        #
+        #   >>> print f.name
+        #   m1.tiny
+        #
+        #   >>> print f.__dict__
+        #   {'name': u'm1.tiny', 'links': [{u'href': u'http://192.153.161.7:8774/v2/a629decc3bc8411a83cc210326db829c/flavors/1', u'rel': u'self'}, {u'href': u'http://192.153.161.7:8774/a629decc3bc8411a83cc210326db829c/flavors/1', u'rel': u'bookmark'}], 'ram': 512, 'vcpus': 1, 'id': u'1', 'OS-FLV-DISABLED:disabled': False, 'manager': <novaclient.v1_1.flavors.FlavorManager object at 0x10fced0>, 'swap': u'', 'os-flavor-access:is_public': True, 'rxtx_factor': 1.0, '_info': {u'name': u'm1.tiny', u'links': [{u'href': u'http://192.153.161.7:8774/v2/a629decc3bc8411a83cc210326db829c/flavors/1', u'rel': u'self'}, {u'href': u'http://192.153.161.7:8774/a629decc3bc8411a83cc210326db829c/flavors/1', u'rel': u'bookmark'}], u'ram': 512, u'OS-FLV-DISABLED:disabled': False, u'vcpus': 1, u'swap': u'', u'os-flavor-access:is_public': True, u'rxtx_factor': 1.0, u'OS-FLV-EXT-DATA:ephemeral': 0, u'disk': 1, u'id': u'1'}, 'disk': 1, 'OS-FLV-EXT-DATA:ephemeral': 0, '_loaded': True}
+        #   
+
+
+        list_flavors = nova.flavors.list()
+        self.log.info("List of available image flavors:")
+        for i in range(len(list_flavors)):
+            self.log.info("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_flavors[i].name, bcolors.ENDC))
+        
+        index = raw_input("Pick one image flavor by typing the index number ")
+        index = int(index)
+
+        name = list_flavors[index-1].name
+        #flavor = nova.flavors.find(name='m1.medium')
+        # FIXME:
+        #   make 'm1.medium' the default
+        flavor = nova.flavors.find(name=name)
         self.server = nova.servers.create(self.vm_name, self.image, flavor=flavor)
         
         while True:

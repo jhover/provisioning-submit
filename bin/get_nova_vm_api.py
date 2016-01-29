@@ -220,6 +220,7 @@ class MyNova:
         self.log.info("when finished, delete the VM with commands:")
         self.log.info("     nova stop %s" %self.vm_id)
         self.log.info("     nova delete %s" %self.vm_id)
+        self.log.info("or running this script with 'delete' option")
         self.log.info("")
 
 

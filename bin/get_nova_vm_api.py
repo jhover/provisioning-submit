@@ -73,13 +73,24 @@ class MyNova:
         self.log.addHandler(logStream)
         self.log.setLevel(logging.DEBUG)
 
+    def usage(self):
+
+        self.log.info('')
+        self.log.info('Tool to facilitate instantiating a VM with nova.')
+        self.log.info('Usage:')
+        self.log.info('')
+        self.log.info('$ python get_nova_vm_api.py create|delete')
+        self.log.info('')
+
 
     def create(self):
+
         self._get_vm_name()
         self._get_image_id()
         self._get_ip()
         self._get_fixed_ip()
         self._print_messages()
+
 
     def _get_vm_name(self):
 
@@ -92,7 +103,7 @@ class MyNova:
         
         self.log.info("List of available VM images:")
         for i in range(len(list_images)):
-            self.log("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_images[i].name, bcolors.ENDC))
+            self.log.info("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_images[i].name, bcolors.ENDC))
         
         index = raw_input("Pick one image type by typing the index number ")
         index = int(index)
@@ -111,7 +122,7 @@ class MyNova:
 
     def _get_image_id(self):
 
-        self.log("Instantiating VM %s ... (it may take a few seconds)" %self.vm_name)
+        self.log.info("Instantiating VM %s ... (it may take a few seconds)" %self.vm_name)
         # FIXME
         # right now the Flavor is hardcoded to m1.medium
         # figure out how to make it variable
@@ -129,7 +140,7 @@ class MyNova:
          
             time.sleep(1)
         
-        self.log("VM %s instantiated, with ID %s" %(self.vm_name, self.vm_id))
+        self.log.info("VM %s instantiated, with ID %s" %(self.vm_name, self.vm_id))
         
         
     def _get_ip(self): 
@@ -149,41 +160,33 @@ class MyNova:
 
     def _print_messages(self):
 
-        self.log("now you can log into your new VM with command:")
-        self.log("     ssh root@%s" %self.ip.ip)
-        self.log("")
-        self.log("when finished, delete the VM with commands:")
-        self.log("     nova stop %s" %self.vm_id)
-        self.log("     nova delete %s" %self.vm_id)
-        self.log("")
+        self.log.info("now you can log into your new VM with command:")
+        self.log.info("     ssh root@%s" %self.ip.ip)
+        self.log.info("")
+        self.log.info("when finished, delete the VM with commands:")
+        self.log.info("     nova stop %s" %self.vm_id)
+        self.log.info("     nova delete %s" %self.vm_id)
+        self.log.info("")
 
 
     def delete(self):
 
         list_servers = nova.servers.list()
         
-        self.log("List of available VM instances (servers):")
+        self.log.info("List of available VM instances (servers):")
         for i in range(len(list_servers)):
-            self.log("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_servers[i].name, bcolors.ENDC))
+            self.log.info("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_servers[i].name, bcolors.ENDC))
         
         index = raw_input("Pick one instance name by typing the index number ")
         index = int(index)
         server = list_servers[index-1]
-        self.log("Deleting VM instance with name %s ..." %server.name)
+        self.log.info("Deleting VM instance with name %s ..." %server.name)
         server.stop()
         server.delete()
 
 
 
 
-def usage():
-    
-    self.log('')
-    self.log('Tool to facilitate instantiating a VM with nova.')
-    self.log('Usage:')
-    self.log('')
-    self.log('$ python get_nova_vm_api.py create|delete')
-    self.log('')
     
     
 
@@ -196,7 +199,7 @@ if __name__ == '__main__':
     mynova = MyNova()
 
     if len(sys.argv) != 2:
-        usage()
+        mynova.usage()
         sys.exit()    
 
     if sys.argv[1] == 'create':

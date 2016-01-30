@@ -37,6 +37,11 @@ import pwd
 import sys
 import time
 
+# FIXME
+# problem with colors is that if we add a handler to the logger
+# to print messages to a file, 
+# the file get filled with nasty mark symbols
+#
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'

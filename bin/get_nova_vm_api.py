@@ -37,6 +37,8 @@ import pwd
 import sys
 import time
 
+# FIXME: 
+# what to do if the import fails?
 from novaclient import client
 
 
@@ -79,7 +81,7 @@ class MyNova:
         self._getlogger()
         
         try:
-            self._setenvironment():
+            self._setenvironment()
         except KeyError, k:
             self.log.critical('mandatory variable %s is not defined in the environment', k)
             raise Exception

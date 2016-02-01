@@ -86,7 +86,7 @@ class MyNova:
             self.log.critical('mandatory variable %s is not defined in the environment', k)
             raise Exception
 
-        sef.nova = client.Client(self.VERSION, self.USERNAME, self.PASSWORD, self.PROJECT_ID, self.AUTH_URL)
+        self.nova = client.Client(self.VERSION, self.USERNAME, self.PASSWORD, self.PROJECT_ID, self.AUTH_URL)
 
 
     def _getlogger(self):
@@ -267,11 +267,10 @@ if __name__ == '__main__':
         # FIXME
         pass
         
-
     if len(sys.argv) != 2:
         mynova.usage()
         sys.exit()    
-
+    
     if sys.argv[1] == 'create':
         mynova.create()
     elif sys.argv[1] == 'delete':
@@ -279,6 +278,6 @@ if __name__ == '__main__':
     else:
         #FIXME
         sys.exit()    
-
+    
 
 

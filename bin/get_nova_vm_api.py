@@ -37,6 +37,9 @@ import pwd
 import sys
 import time
 
+from novaclient import client
+
+
 # FIXME
 # problem with colors is that if we add a handler to the logger
 # to print messages to a file, 
@@ -51,21 +54,6 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
- 
-
-VERSION = "2"
-USERNAME = os.environ['OS_USERNAME']
-PASSWORD = os.environ['OS_PASSWORD']
-PROJECT_ID = os.environ['OS_TENANT_NAME']
-AUTH_URL = os.environ['OS_AUTH_URL']
-# FIXME !!
-# these variables MUST exist in the environment
-# check it before doing anything else
-
-
-from novaclient import client
-
-nova = client.Client(VERSION, USERNAME, PASSWORD, PROJECT_ID, AUTH_URL)
 
 
 class MyImage:
@@ -84,11 +72,19 @@ class MyImage:
             return 0
 
 
-
 class MyNova:
 
     def __init__(self):
+
         self._getlogger()
+        
+        try:
+            self._setenvironment():
+        except KeyError, k:
+            self.log.critical('mandatory variable %s is not defined in the environment', k)
+            raise Exception
+
+        sef.nova = client.Client(self.VERSION, self.USERNAME, self.PASSWORD, self.PROJECT_ID, self.AUTH_URL)
 
 
     def _getlogger(self):
@@ -102,6 +98,15 @@ class MyNova:
         logStream.setFormatter(formatter)
         self.log.addHandler(logStream)
         self.log.setLevel(logging.DEBUG)
+
+
+    def _setenvironment(self):
+
+        self.VERSION = "2"
+        self.USERNAME = os.environ['OS_USERNAME']
+        self.PASSWORD = os.environ['OS_PASSWORD']
+        self.PROJECT_ID = os.environ['OS_TENANT_NAME']
+        self.AUTH_URL = os.environ['OS_AUTH_URL']
 
     def usage(self):
 
@@ -126,7 +131,7 @@ class MyNova:
 
         list_images = []
         
-        for image in nova.images.list():
+        for image in self.nova.images.list():
             list_images.append( MyImage(image.id, image.name, image) )
             
         list_images.sort()
@@ -169,7 +174,7 @@ class MyNova:
         #   {'name': u'm1.tiny', 'links': [{u'href': u'http://192.153.161.7:8774/v2/a629decc3bc8411a83cc210326db829c/flavors/1', u'rel': u'self'}, {u'href': u'http://192.153.161.7:8774/a629decc3bc8411a83cc210326db829c/flavors/1', u'rel': u'bookmark'}], 'ram': 512, 'vcpus': 1, 'id': u'1', 'OS-FLV-DISABLED:disabled': False, 'manager': <novaclient.v1_1.flavors.FlavorManager object at 0x10fced0>, 'swap': u'', 'os-flavor-access:is_public': True, 'rxtx_factor': 1.0, '_info': {u'name': u'm1.tiny', u'links': [{u'href': u'http://192.153.161.7:8774/v2/a629decc3bc8411a83cc210326db829c/flavors/1', u'rel': u'self'}, {u'href': u'http://192.153.161.7:8774/a629decc3bc8411a83cc210326db829c/flavors/1', u'rel': u'bookmark'}], u'ram': 512, u'OS-FLV-DISABLED:disabled': False, u'vcpus': 1, u'swap': u'', u'os-flavor-access:is_public': True, u'rxtx_factor': 1.0, u'OS-FLV-EXT-DATA:ephemeral': 0, u'disk': 1, u'id': u'1'}, 'disk': 1, 'OS-FLV-EXT-DATA:ephemeral': 0, '_loaded': True}
         #   
 
-        list_flavors = nova.flavors.list()
+        list_flavors = self.nova.flavors.list()
         self.log.info("List of available image flavors:")
         for i in range(len(list_flavors)):
             self.log.info("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_flavors[i].name, bcolors.ENDC))
@@ -178,16 +183,16 @@ class MyNova:
         index = int(index)
 
         name = list_flavors[index-1].name
-        #flavor = nova.flavors.find(name='m1.medium')
+        #flavor = self.nova.flavors.find(name='m1.medium')
         # FIXME:
         #   make 'm1.medium' the default
-        flavor = nova.flavors.find(name=name)
-        self.server = nova.servers.create(self.vm_name, self.image, flavor=flavor)
+        flavor = self.nova.flavors.find(name=name)
+        self.server = self.nova.servers.create(self.vm_name, self.image, flavor=flavor)
        
         self.log.info('Instantiating VM... (this step will take a few seconds)')
  
         while True:
-            self.server = nova.servers.find(name=self.vm_name)
+            self.server = self.nova.servers.find(name=self.vm_name)
             status = self.server.status
             power = int(self.server.__dict__['OS-EXT-STS:power_state'])
             
@@ -202,7 +207,7 @@ class MyNova:
         
     def _get_ip(self): 
         
-        list_floating_ips = nova.floating_ips.list()
+        list_floating_ips = self.nova.floating_ips.list()
         for ip in list_floating_ips:
             if not ip.fixed_ip:
                 self.ip = ip
@@ -211,8 +216,8 @@ class MyNova:
     
     def _get_fixed_ip(self): 
 
-        nova.servers.add_floating_ip(self.server, self.ip.ip)
-        self.ip = nova.floating_ips.find(ip=self.ip.ip)
+        self.nova.servers.add_floating_ip(self.server, self.ip.ip)
+        self.ip = self.nova.floating_ips.find(ip=self.ip.ip)
         
 
     def _print_messages(self):
@@ -229,7 +234,7 @@ class MyNova:
 
     def delete(self):
 
-        list_servers = nova.servers.list()
+        list_servers = self.nova.servers.list()
         
         self.log.info("List of VM instances (servers) currently running:")
         for i in range(len(list_servers)):
@@ -254,7 +259,12 @@ if __name__ == '__main__':
     # FIXME!!
     # this needs to be done properly, with argparse, getopt, or similar.
 
-    mynova = MyNova()
+    try:
+        mynova = MyNova()
+    except:
+        # FIXME
+        pass
+        
 
     if len(sys.argv) != 2:
         mynova.usage()

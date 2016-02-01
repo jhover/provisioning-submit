@@ -134,7 +134,8 @@ class MyNova:
         list_images = []
         
         for image in self.nova.images.list():
-            list_images.append( MyImage(image.id, image.name, image) )
+            if image.status == "ACTIVE":
+                list_images.append( MyImage(image.id, image.name, image) )
             
         list_images.sort()
         

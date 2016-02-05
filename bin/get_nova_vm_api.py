@@ -78,6 +78,7 @@ class MyNova:
 
     def __init__(self):
 
+        self._parseopts()
         self._getlogger()
         
         try:
@@ -87,6 +88,14 @@ class MyNova:
             raise Exception
 
         self.nova = client.Client(self.VERSION, self.USERNAME, self.PASSWORD, self.PROJECT_ID, self.AUTH_URL)
+
+
+    def _parseopts(self):
+        """
+        TO BE IMPLEMENTED !!!
+        """
+        # FIXME
+        self.verbosity = logging.DEBUG
 
 
     def _getlogger(self):
@@ -99,7 +108,7 @@ class MyNova:
         formatter.converter = time.gmtime  # to convert timestamps to UTC
         logStream.setFormatter(formatter)
         self.log.addHandler(logStream)
-        self.log.setLevel(logging.DEBUG)
+        self.log.setLevel(self.verbosity)
 
 
     def _setenvironment(self):

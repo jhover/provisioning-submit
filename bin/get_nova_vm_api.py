@@ -42,20 +42,108 @@ import time
 from novaclient import client
 
 
-# FIXME
-# problem with colors is that if we add a handler to the logger
-# to print messages to a file, 
-# the file get filled with nasty mark symbols
-#
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+class MyNovaUserInterface(object):
+
+    def __init__(self, verbosity):
+
+        class BColors:
+            #
+            # WARNING:
+            # problem with colors is that if we add a handler to the logger
+            # to print messages to a file, 
+            # the file get filled with nasty mark symbols
+            #
+            HEADER = '\033[95m'
+            OKBLUE = '\033[94m'
+            OKGREEN = '\033[92m'
+            WARNING = '\033[93m'
+            FAIL = '\033[91m'
+            ENDC = '\033[0m'
+            BOLD = '\033[1m'
+            UNDERLINE = '\033[4m'
+
+        self.bcolors = BColors()
+        self.verbosity = verbosity
+        self._getlogger()
+
+    def _getlogger(self):
+
+        self.log = logging.getLogger('userinterface')
+        logStream = logging.StreamHandler()
+        #FORMAT='%(asctime)s (UTC) [ %(levelname)s ] %(name)s %(filename)s:%(lineno)d %(funcName)s(): %(message)s'
+        FORMAT='%(message)s'
+        formatter = logging.Formatter(FORMAT)
+        formatter.converter = time.gmtime  # to convert timestamps to UTC
+        logStream.setFormatter(formatter)
+        self.log.addHandler(logStream)
+        self.log.setLevel(self.verbosity)
+
+
+    def debug(self, msg):
+        self.log.debug(msg)
+
+    def info(self, msg):
+        self.log.info(msg)
+
+    def warning(self, msg):
+        self.log.warning(msg)
+
+    def error(self, msg):
+        self.log.error(msg)
+
+    def critical(self, msg):
+        self.log.critical(msg)
+
+
+    def select_image(self, list_images):
+
+        self.log.info("List of available VM images:")
+        for i in range(len(list_images)):
+            self.log.info("    %s%s %s%s : %s%s" %(self.bcolors.BOLD, self.bcolors.FAIL, i+1, self.bcolors.OKBLUE, list_images[i].name, self.bcolors.ENDC))
+        index = raw_input("Pick one image type by typing the index number: ")
+        index = int(index)
+        return index
+    
+    def select_name(self, image_name):
+
+        username = pwd.getpwuid( os.getuid() )[ 0 ]
+        date = time.strftime('%y%m%d')
+        default_vm_name = "%s-%s-%s" %(image_name, username, date)
+        vm_name = raw_input("Type a name for the VM instance (or hit ENTER for suggested name: %s) " %default_vm_name )
+        if not vm_name:
+            vm_name = default_vm_name
+        return vm_name
+
+    def select_flavor(self, list_flavors):
+
+        self.log.info("List of available image flavors:")
+        for i in range(len(list_flavors)):
+            self.log.info("    %s%s %s%s : %s%s" %(self.bcolors.BOLD, self.bcolors.FAIL, i+1, self.bcolors.OKBLUE, list_flavors[i].name, self.bcolors.ENDC))
+        index = raw_input("Pick one image flavor by typing the index number: ")
+        index = int(index)
+        return index
+
+    def final_message(self, ip, vm_id):
+
+        self.log.info("now you can log into your new VM with command:")
+        self.log.info("     ssh root@%s" %ip.ip)
+        self.log.info("")
+        self.log.info("when finished, delete the VM with commands:")
+        self.log.info("     nova stop %s" %vm_id)
+        self.log.info("     nova delete %s" %vm_id)
+        self.log.info("or running this script with 'delete' option")
+        self.log.info("")
+
+    def select_delete(self, list_servers):
+
+        self.log.info("List of VM instances (servers) currently running:")
+        for i in range(len(list_servers)):
+            self.log.info("    %s%s %s%s : %s%s" %(self.bcolors.BOLD, self.bcolors.FAIL, i+1, self.bcolors.OKBLUE, list_servers[i].name, self.bcolors.ENDC))
+        index = raw_input("Pick one instance name by typing the index number: ")
+        index = int(index)
+        return index
+
+
 
 
 class MyImage:
@@ -89,6 +177,8 @@ class MyNova:
 
         self.nova = client.Client(self.VERSION, self.USERNAME, self.PASSWORD, self.PROJECT_ID, self.AUTH_URL)
 
+        self.ui = MyNovaUserInterface(self.verbosity)
+
 
     def _parseopts(self):
         """
@@ -99,8 +189,7 @@ class MyNova:
 
 
     def _getlogger(self):
-
-        self.log = logging.getLogger('main')
+        self.log = logging.getLogger('mynova')
         logStream = logging.StreamHandler()
         #FORMAT='%(asctime)s (UTC) [ %(levelname)s ] %(name)s %(filename)s:%(lineno)d %(funcName)s(): %(message)s'
         FORMAT='%(message)s'
@@ -147,29 +236,18 @@ class MyNova:
                 list_images.append( MyImage(image.id, image.name, image) )
             
         list_images.sort()
-        
-        self.log.info("List of available VM images:")
-        for i in range(len(list_images)):
-            self.log.info("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_images[i].name, bcolors.ENDC))
-        
-        index = raw_input("Pick one image type by typing the index number: ")
-        index = int(index)
+        index = self.ui.select_image(list_images)
+
         self.image_name = list_images[index-1].name
         self.image_id = list_images[index-1].id
         self.image = list_images[index-1].image
         
-        username = pwd.getpwuid( os.getuid() )[ 0 ]
-        date = time.strftime('%y%m%d')
-        default_vm_name = "%s-%s-%s" %(self.image_name, username, date)
-        self.vm_name = raw_input("Type a name for the VM instance (or hit ENTER for suggested name: %s) " %default_vm_name )
-        if not self.vm_name:
-            self.vm_name = default_vm_name
-
+        self.vm_name = self.ui.select_name(self.image_name)
 
 
     def _get_image_id(self):
 
-        self.log.info("Instantiating VM %s ... (it may take a few seconds)" %self.vm_name)
+        self.ui.info("Instantiating VM %s ... (it may take a few seconds)" %self.vm_name)
 
         #
         #   >>> nova.flavors.list()
@@ -187,12 +265,7 @@ class MyNova:
         #   
 
         list_flavors = self.nova.flavors.list()
-        self.log.info("List of available image flavors:")
-        for i in range(len(list_flavors)):
-            self.log.info("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_flavors[i].name, bcolors.ENDC))
-        
-        index = raw_input("Pick one image flavor by typing the index number: ")
-        index = int(index)
+        index = self.ui.select_flavor(list_flavors)
 
         name = list_flavors[index-1].name
         #flavor = self.nova.flavors.find(name='m1.medium')
@@ -201,7 +274,7 @@ class MyNova:
         flavor = self.nova.flavors.find(name=name)
         self.server = self.nova.servers.create(self.vm_name, self.image, flavor=flavor)
        
-        self.log.info('Instantiating VM... (this step will take a few seconds)')
+        self.ui.info('Instantiating VM... (this step will take a few seconds)')
  
         while True:
             self.server = self.nova.servers.find(name=self.vm_name)
@@ -214,7 +287,7 @@ class MyNova:
          
             time.sleep(1)
         
-        self.log.info("VM %s instantiated, with ID %s" %(self.vm_name, self.vm_id))
+        self.ui.info("VM %s instantiated, with ID %s" %(self.vm_name, self.vm_id))
         
         
     def _get_ip(self): 
@@ -233,34 +306,18 @@ class MyNova:
         
 
     def _print_messages(self):
-
-        self.log.info("now you can log into your new VM with command:")
-        self.log.info("     ssh root@%s" %self.ip.ip)
-        self.log.info("")
-        self.log.info("when finished, delete the VM with commands:")
-        self.log.info("     nova stop %s" %self.vm_id)
-        self.log.info("     nova delete %s" %self.vm_id)
-        self.log.info("or running this script with 'delete' option")
-        self.log.info("")
+        self.ui.final_message(self.ip, self.vm_id)
 
 
     def delete(self):
 
         list_servers = self.nova.servers.list()
-        
-        self.log.info("List of VM instances (servers) currently running:")
-        for i in range(len(list_servers)):
-            self.log.info("    %s%s %s%s : %s%s" %(bcolors.BOLD, bcolors.FAIL, i+1, bcolors.OKBLUE, list_servers[i].name, bcolors.ENDC))
-        
-        index = raw_input("Pick one instance name by typing the index number: ")
-        index = int(index)
+        index = self.ui.select_delete(list_servers)
         server = list_servers[index-1]
-        self.log.info("Deleting VM instance with name %s ..." %server.name)
+        self.ui.info("Deleting VM instance with name %s ..." %server.name)
         server.stop()
         server.delete()
-        self.log.info("VM instance with name %s deleted" %server.name)
-
-
+        self.ui.info("VM instance with name %s deleted" %server.name)
 
 
     

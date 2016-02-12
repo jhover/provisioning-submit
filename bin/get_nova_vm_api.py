@@ -223,7 +223,6 @@ class MyNova:
         self._get_vm_name()
         self._get_image_id()
         self._get_ip()
-        self._get_fixed_ip()
         self._print_messages()
 
 
@@ -288,11 +287,18 @@ class MyNova:
             time.sleep(1)
         
         self.ui.info("VM %s instantiated, with ID %s" %(self.vm_name, self.vm_id))
+       
+
+    def _get_ip(self):
+
+        self._get_floating_ip() 
+        self._get_fixed_ip()
         
-        
-    def _get_ip(self): 
+
+    def _get_floating_ip(self): 
         
         list_floating_ips = self.nova.floating_ips.list()
+        # search for the first available IP not yet picked up
         for ip in list_floating_ips:
             if not ip.fixed_ip:
                 self.ip = ip

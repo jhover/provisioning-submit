@@ -96,14 +96,15 @@ class MyNovaUserInterface(object):
 
 
     def select_image(self, list_images):
+        return self._select_from_list(list_images, "VM images")
 
-        self.log.info("List of available VM images:")
-        for i in range(len(list_images)):
-            self.log.info("    %s%s %s%s : %s%s" %(self.bcolors.BOLD, self.bcolors.FAIL, i+1, self.bcolors.OKBLUE, list_images[i].name, self.bcolors.ENDC))
-        index = raw_input("Pick one image type by typing the index number: ")
-        index = int(index)
-        return index
+    def select_flavor(self, list_flavors):
+        return self._select_from_list(list_flavors, "image flavors")
+
+    def select_delete(self, list_servers):
+        return self._select_from_list(list_servers, "VM instances (servers) currently running")
     
+
     def select_name(self, image_name):
 
         username = pwd.getpwuid( os.getuid() )[ 0 ]
@@ -114,16 +115,8 @@ class MyNovaUserInterface(object):
             vm_name = default_vm_name
         return vm_name
 
-    def select_flavor(self, list_flavors):
 
-        self.log.info("List of available image flavors:")
-        for i in range(len(list_flavors)):
-            self.log.info("    %s%s %s%s : %s%s" %(self.bcolors.BOLD, self.bcolors.FAIL, i+1, self.bcolors.OKBLUE, list_flavors[i].name, self.bcolors.ENDC))
-        index = raw_input("Pick one image flavor by typing the index number: ")
-        index = int(index)
-        return index
-
-    def final_message(self, ip, vm_id):
+    def create_final_message(self, ip, vm_id):
 
         self.log.info("now you can log into your new VM with command:")
         self.log.info("     ssh root@%s" %ip.ip)
@@ -134,12 +127,18 @@ class MyNovaUserInterface(object):
         self.log.info("or running this script with 'delete' option")
         self.log.info("")
 
-    def select_delete(self, list_servers):
 
-        self.log.info("List of VM instances (servers) currently running:")
-        for i in range(len(list_servers)):
-            self.log.info("    %s%s %s%s : %s%s" %(self.bcolors.BOLD, self.bcolors.FAIL, i+1, self.bcolors.OKBLUE, list_servers[i].name, self.bcolors.ENDC))
-        index = raw_input("Pick one instance name by typing the index number: ")
+    def _select_from_list(self, list_items, item_type):
+        """
+        generic method to display a list of options 
+        on the stdout, 
+        and let the user to pick one by index number
+        """
+
+        self.log.info("List of available %s:" %item_type)
+        for i in range(len(list_items)):
+            self.log.info("    %s%s %s%s : %s%s" %(self.bcolors.BOLD, self.bcolors.FAIL, i+1, self.bcolors.OKBLUE, list_items[i].name, self.bcolors.ENDC))
+        index = raw_input("Pick one by typing the index number: ")
         index = int(index)
         return index
 
@@ -223,7 +222,7 @@ class MyNova:
         self._get_vm_name()
         self._get_image_id()
         self._get_ip()
-        self._print_messages()
+        self._print_create_final_message()
 
 
     def _get_vm_name(self):
@@ -311,8 +310,8 @@ class MyNova:
         self.ip = self.nova.floating_ips.find(ip=self.ip.ip)
         
 
-    def _print_messages(self):
-        self.ui.final_message(self.ip, self.vm_id)
+    def _print_create_final_message(self):
+        self.ui.create_final_message(self.ip, self.vm_id)
 
 
     def delete(self):

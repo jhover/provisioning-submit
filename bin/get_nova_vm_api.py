@@ -271,6 +271,11 @@ class MyNova:
         #   make 'm1.medium' the default
         flavor = self.nova.flavors.find(name=name)
         self.server = self.nova.servers.create(self.vm_name, self.image, flavor=flavor)
+        #print ">>>>>>>>>>>>>>>>>"
+        #print dir(self.server)
+        #print
+        #print self.server.__dict__
+        #print ">>>>>>>>>>>>>>>>>"
        
         self.ui.info('Instantiating VM... (this step will take a few seconds)')
  
@@ -284,6 +289,12 @@ class MyNova:
                 break
          
             time.sleep(1)
+
+        #print ">>>>>>>>>>>>>>>>>"
+        #print dir(self.server)
+        #print
+        #print self.server.__dict__
+        #print ">>>>>>>>>>>>>>>>>"
         
         self.ui.info("VM %s instantiated, with ID %s" %(self.vm_name, self.vm_id))
        

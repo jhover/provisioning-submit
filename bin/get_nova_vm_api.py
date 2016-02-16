@@ -1,5 +1,15 @@
 #!/usr/bin/env python 
 
+#################################################################
+#   FIXME !!!
+#   the split into classes MyNova and MyNovaUserInterface
+#   was not done properly
+#   the core class MyNova should not have any call to the 
+#   UserInterface class
+#   it should be the opposite: the UI class calls the core class
+#################################################################
+
+
 #
 # documentation on the python API:
 #       http://docs.openstack.org/developer/python-novaclient/ref/v2/

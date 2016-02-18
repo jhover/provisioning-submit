@@ -235,15 +235,22 @@ class MyNova:
         self._print_create_final_message()
 
 
-    def _get_vm_name(self):
+    def _get_list_images(self):
 
         list_images = []
-        
+
         for image in self.nova.images.list():
             if image.status == "ACTIVE":
                 list_images.append( MyImage(image.id, image.name, image) )
-            
+
         list_images.sort()
+        return list_images
+
+
+    def _get_vm_name(self):
+
+        list_images = self._get_list_images()
+
         index = self.ui.select_image(list_images)
 
         self.image_name = list_images[index-1].name

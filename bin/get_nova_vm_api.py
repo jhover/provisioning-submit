@@ -246,6 +246,12 @@ class MyNova:
         list_images.sort()
         return list_images
 
+    def _set_iamge_properties(self, image):
+
+        self.image_name = image.name
+        self.image_id = image.id
+        self.image = image.image
+
 
     def _get_vm_name(self):
 
@@ -253,9 +259,7 @@ class MyNova:
 
         index = self.ui.select_image(list_images)
 
-        self.image_name = list_images[index-1].name
-        self.image_id = list_images[index-1].id
-        self.image = list_images[index-1].image
+        image = list_images[index-1]
         
         self.vm_name = self.ui.select_name(self.image_name)
 

@@ -247,6 +247,8 @@ class MyNova:
         return list_images
 
     def _set_iamge_properties(self, image):
+        # FIXME
+        # this method is most probably not needed
 
         self.image_name = image.name
         self.image_id = image.id

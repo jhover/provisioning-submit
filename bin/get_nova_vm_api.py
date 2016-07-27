@@ -94,17 +94,6 @@ class NovaCore:
         return self.client.flavors.find(name=flavor_name)
 
 
-    def next_free_floating_ip(self):
-        '''
-        search for the first available IP not yet picked up
-        '''
-        list_floating_ips = self.client.floating_ips.list()
-        for ip in list_floating_ips:
-            if not ip.fixed_ip:
-                self.ip = ip
-                break
-
-
     def create_server(self, vm_name, image, flavor):
 
         self.client.servers.create(vm_name, image, flavor=flavor)
@@ -113,9 +102,8 @@ class NovaCore:
             status = server.status
             power = int(server.__dict__['OS-EXT-STS:power_state'])
             if status == "ACTIVE" and power == 1:
-                break
+                return server
             time.sleep(1)
-        return server
 
 
     def get_server(self, vm_name):
@@ -134,8 +122,7 @@ class NovaCore:
         # search for the first available IP not yet picked up
         for floating_ip in list_floating_ips:
             if not floating_ip.fixed_ip:
-                break
-        return floating_ip
+                return floating_ip
 
     
     def _get_fixed_ip(self, server, floating_ip): 

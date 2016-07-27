@@ -90,8 +90,25 @@ class NovaCore:
         return self.client.flavors.list()
 
 
+    def get_list_servers(self):
+        return self.client.servers.list()
+
+
     def get_flavor(self, flavor_name):
         return self.client.flavors.find(name=flavor_name)
+
+
+    def get_server(self, vm_name):
+        return self.client.servers.find(name=vm_name)
+
+
+    def get_next_floating_ip(self): 
+
+        list_floating_ips = self.client.floating_ips.list()
+        # search for the first available IP not yet picked up
+        for floating_ip in list_floating_ips:
+            if not floating_ip.fixed_ip:
+                return floating_ip
 
 
     def create_server(self, vm_name, image, flavor):
@@ -106,38 +123,24 @@ class NovaCore:
             time.sleep(1)
 
 
-    def get_server(self, vm_name):
-        return self.client.servers.find(name=vm_name)
+    def delete_server(self, server):
+        server.stop()
+        server.delete()
 
 
     def set_fixed_ip(self, server):
 
-        floating_ip = self.next_floating_ip() 
-        return self._get_fixed_ip(server, floating_ip)
+        floating_ip = self.get_next_floating_ip() 
+        return self.add_floating_ip(server, floating_ip)
      
-
-    def next_floating_ip(self): 
-     
-        list_floating_ips = self.client.floating_ips.list()
-        # search for the first available IP not yet picked up
-        for floating_ip in list_floating_ips:
-            if not floating_ip.fixed_ip:
-                return floating_ip
-
     
-    def _get_fixed_ip(self, server, floating_ip): 
+    def add_floating_ip(self, server, floating_ip): 
 
         self.client.servers.add_floating_ip(server, floating_ip.ip)
         fixed_ip = self.client.floating_ips.find(ip=floating_ip.ip)
         return fixed_ip
 
 
-    def get_list_servers(self):
-        return self.client.servers.list()
-
-    def delete_server(self, server):
-        server.stop()
-        server.delete()
 
     
 

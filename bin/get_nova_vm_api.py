@@ -94,12 +94,16 @@ class NovaCore:
         return self.client.servers.list()
 
 
+    def get_image(self, image_name):
+        return self.client.images.find(name=image_name)
+
+
     def get_flavor(self, flavor_name):
         return self.client.flavors.find(name=flavor_name)
 
 
-    def get_server(self, vm_name):
-        return self.client.servers.find(name=vm_name)
+    def get_server(self, server_name):
+        return self.client.servers.find(name=server_name)
 
 
     def get_next_floating_ip(self): 

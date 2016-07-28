@@ -46,10 +46,10 @@ from novaclient import client as novaclient
 
 class Image:
 
-    def __init__(self, id, name, image):
-        self.id = id
-        self.name = name
+    def __init__(self, image):
         self.image = image
+        self.id = image.id
+        self.name = image.name
 
     def __cmp__(self, i):
         if self.name < i.name:
@@ -80,9 +80,8 @@ class NovaCore:
     
         for image in self.client.images.list():
             if image.status == "ACTIVE":
-                list_images.append( Image(image.id, image.name, image) )
+                list_images.append(Image(image))
     
-        list_images.sort()
         return list_images
 
 
@@ -229,6 +228,7 @@ class NovaCLI:
 
     def _set_image(self):
         list_images = self.core.get_list_images()
+        list_images.sort()
         index = self._select_image_from_list(list_images)
         image = list_images[index-1]
         return image
@@ -311,20 +311,6 @@ class NovaCLI:
         print("")
 
 
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
  
 # =========================================================================
 
@@ -351,5 +337,3 @@ if __name__ == '__main__':
         #FIXME
         sys.exit()    
     
-
-

@@ -44,12 +44,7 @@ from novaclient import client as novaclient
 
 # =========================================================================
 
-class Image:
-
-    def __init__(self, image):
-        self.image = image
-        self.id = image.id
-        self.name = image.name
+class CmpBase:
 
     def __cmp__(self, i):
         if self.name < i.name:
@@ -58,6 +53,31 @@ class Image:
             return 1
         else:
             return 0
+
+
+class Image(CmpBase):
+
+    def __init__(self, image):
+        self.image = image
+        self.id = image.id
+        self.name = image.name
+
+
+class Flavor(CmpBase):
+
+    def __init__(self, flavor):
+        self.flavor = flavor 
+        self.id = flavor.id
+        self.name = flavor.name
+
+
+class Server(CmpBase):
+
+    def __init__(self, server):
+        self.server = server 
+        self.id = server.id
+        self.name = server.name
+
 
 # =========================================================================
 
@@ -77,20 +97,28 @@ class NovaCore:
     def get_list_images(self):
     
         list_images = []
-    
         for image in self.client.images.list():
             if image.status == "ACTIVE":
                 list_images.append(Image(image))
-    
         return list_images
 
 
     def get_list_flavors(self):
-        return self.client.flavors.list()
+
+        list_flavors = []
+        for flavor in self.client.flavors.list():
+            list_flavors.append(Flavor(flavor))
+        return list_flavors
 
 
+    #def get_list_servers(self):
+    #    return self.client.servers.list()
     def get_list_servers(self):
-        return self.client.servers.list()
+
+        list_servers = []
+        for server in self.client.servers.list():
+            list_servers.append(Server(server))
+        return list_servers
 
 
     def get_image(self, image_name):
@@ -213,8 +241,9 @@ class NovaCLI:
     def delete(self):
     
         list_servers = self.core.get_list_servers()
+        list_servers.sort()
         index = self._select_server_to_delete_from_list(list_servers)
-        server = list_servers[index-1]
+        server = list_servers[index-1].server
         print("Deleting VM instance with name %s ..." %server.name)
         self.core.delete_server(server)
         print("VM instance with name %s deleted" %server.name)
@@ -251,6 +280,7 @@ class NovaCLI:
         # FIXME:
         #   make 'm1.medium' the default
         list_flavors = self.core.get_list_flavors()
+        list_flavors.sort()
         index = self._select_flavor_from_list(list_flavors)
         flavor_name = list_flavors[index-1].name
         flavor = self.core.get_flavor(flavor_name)
@@ -311,7 +341,6 @@ class NovaCLI:
         print("")
 
 
- 
 # =========================================================================
 
 if __name__ == '__main__':
@@ -337,3 +366,15 @@ if __name__ == '__main__':
         #FIXME
         sys.exit()    
     
+
+    #nova = NovaCore("2","jcaballero","jcaballeropw","osgsoft","http://cldext02.usatlas.bnl.gov:35357/v2.0/")
+    #image = nova.get_image('centos7-bare-cloud')
+    #flavor = nova.get_flavor('m1.medium')
+    #nova.create_server("centos7-bare-cloud-caballer-160727", image, flavor)
+
+    #nova = NovaCore("2","jcaballero","jcaballeropw","osgsoft","http://cldext02.usatlas.bnl.gov:35357/v2.0/")
+    #server = nova.get_server("centos7-bare-cloud-caballer-160727")
+    #nova.delete_server(server)
+   
+
+

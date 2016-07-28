@@ -55,28 +55,28 @@ class CmpBase:
             return 0
 
 
-class Image(CmpBase):
+class Item(CmpBase):
+    def __init__(self, item):
+        self.id = item.id
+        self.name = item.name
 
+
+class Image(Item):
     def __init__(self, image):
+        Item.__init__(self, image)
         self.image = image
-        self.id = image.id
-        self.name = image.name
 
 
-class Flavor(CmpBase):
-
+class Flavor(Item):
     def __init__(self, flavor):
+        Item.__init__(self, flavor)
         self.flavor = flavor 
-        self.id = flavor.id
-        self.name = flavor.name
 
 
-class Server(CmpBase):
-
+class Server(Item):
     def __init__(self, server):
+        Item.__init__(self, server)
         self.server = server 
-        self.id = server.id
-        self.name = server.name
 
 
 # =========================================================================

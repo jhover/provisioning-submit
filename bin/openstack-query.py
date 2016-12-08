@@ -64,6 +64,7 @@ def runCommand(cmd):
 
 
 def getTenantList():
+    log = logging.getLogger()
     cmd = 'keystone tenant-list'
     lines = runCommand(cmd)
     tl = []

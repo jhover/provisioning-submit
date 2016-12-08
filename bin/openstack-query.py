@@ -1,6 +1,7 @@
 #!/bin/env python
-
+import logging
 import subprocess
+import sys
 
 print("openstack-query")
 
@@ -31,7 +32,13 @@ class NovaInstance(object):
         
 class GlanceImage(object):
     def __init__(self, imageid, name, format, container, size, status ):
-
+        self.imageid = imageid
+        self.name = name
+        self.format = format
+        self.container = container
+        self.size = size
+        self.status = status
+        
 
 #        
 #        FUNCTIONS

@@ -5,8 +5,6 @@ import sys
 
 print("openstack-query")
 
-
-
 #
 #            CLASSES
 #
@@ -23,11 +21,19 @@ class KeystoneTenant(object):
         self.tenantid = tenantid
         self.name = name
         self.enabled = enabled
+    
+    def __str__(self):
+        s = ""
+        s += "id=%s, name=%s" % (self.tenantid, self.name)
+        return s
 
 class NovaInstance(object):
     def __init__(self, id, name, status, power, networks ):
         self.id = ie
         self.name = name
+        self.status = status
+        self.power = power
+        self.networks = networks
         
         
 class GlanceImage(object):
@@ -43,13 +49,29 @@ class GlanceImage(object):
 #        
 #        FUNCTIONS
 #
-
-def getTenantList():
-    cmd = 'keystone tenant-list '
+def runCommand(cmd):
+    log = logging.getLogger()
     log.debug("command= '%s'" % cmd)
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     (out, err) = p.communicate()    
+    lines = out.split('\n')
+    num = len(lines)
+    log.info("Got %d lines of output." % num)
+    for line in lines:
+        log.debug('line="%s"' % line)
+        line = line.strip()
 
+
+
+def getTenantList():
+    cmd = 'keystone tenant-list'
+    lines = runCommand(cmd)
+    tl = []
+    # Real output is on lines [3:-1]
+    if len(lines) > 2:
+        for line in lines[3:-1]:
+            log.debug('valid line="%s"' % line)
+    return tl
 
 def setupLogging():
     log = logging.getLogger()
@@ -64,6 +86,7 @@ def setupLogging():
 
 if __name__ == '__main__':
     setupLogging()
-        
-        
+    tl = getTenantList()    
+    for t in tl:
+        print(t)
         

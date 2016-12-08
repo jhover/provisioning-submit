@@ -74,7 +74,13 @@ def parseOpenstackCmdOutput(linelist):
             log.debug('valid line="%s"' % line)
             fields = line.split()
             log.debug('fields="%s"' % fields)
-            outlines.append(fields)
+            filteredfields = []
+            for f in fields:
+                if f == '|':
+                    pass
+                else:
+                    filteredfields.append(f)
+            outlines.append(filteredfields)
     return outlines
 
 def getTenantList():

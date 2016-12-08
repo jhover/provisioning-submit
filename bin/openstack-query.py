@@ -60,7 +60,7 @@ def runCommand(cmd):
     for line in lines:
         log.debug('line="%s"' % line)
         line = line.strip()
-
+    return lines
 
 
 def getTenantList():

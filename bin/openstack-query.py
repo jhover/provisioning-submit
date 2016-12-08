@@ -70,7 +70,7 @@ def getTenantList():
     tl = []
     # Real output is on lines [3:-1]
     if len(lines) > 2:
-        for line in lines[3:-1]:
+        for line in lines[3:-2]:
             log.debug('valid line="%s"' % line)
     return tl
 

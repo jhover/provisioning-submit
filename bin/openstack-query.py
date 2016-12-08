@@ -75,13 +75,17 @@ def parseOpenstackCmdOutput(linelist):
             log.debug('valid line="%s"' % line)
             fields = line.split()
             log.debug('fields="%s"' % fields)
-
+            outlines.append(fields)
+    return outlines
 
 def getTenantList():
     log = logging.getLogger()
     cmd = 'keystone tenant-list'
     lines = runCommand(cmd)
-    tl = []
+    validlines = parseOpenstackCmdOutput(lines)
+    
+    #tl = []
+    tl = validlines
     
     return tl
 

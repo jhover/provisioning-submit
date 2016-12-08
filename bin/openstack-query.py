@@ -64,7 +64,6 @@ def runCommand(cmd):
 
 def parseOpenstackCmdOutput(linelist):
     log = logging.getLogger()
-    log.info("Got %d lines of output." % num)
     for line in linelist:
         log.debug('line="%s"' % line)
         line = line.strip()

@@ -24,8 +24,9 @@ class KeystoneTenant(object):
         self.enabled = enabled
 
 class NovaInstance(object):
-    def __init__(self, ):
-        self.
+    def __init__(self, id, name, status, power, networks ):
+        self.id = ie
+        self.name = name
         
         
 class GlanceImage(object):

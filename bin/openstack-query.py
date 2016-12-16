@@ -28,7 +28,7 @@ class KeystoneTenant(object):
         return s
 
 class NovaInstance(object):
-    def __init__(self, id, name, status, power, networks ):
+    def __init__(self, instanceid, name, status, power, networks ):
         self.id = ie
         self.name = name
         self.status = status
@@ -86,20 +86,54 @@ def parseOpenstackCmdOutput(linelist):
 def getTenantList():
     log = logging.getLogger()
     cmd = 'keystone tenant-list'
+    tl = []
     lines = runCommand(cmd)
-    validlines = parseOpenstackCmdOutput(lines)
-    
-    #tl = []
-    tl = validlines
-    
+    validfields = parseOpenstackCmdOutput(lines)
+    for vf in validfields:
+        kt = KeystoneTenant(vf[0],
+                           vf[1],
+                           vf[2],
+                           )
+        tl.append(kt)
     return tl
+
 
 def getUsageList():
     log = logging.getLogger()
     cmd = 'nova usage-list'
+    ul = []
     lines = runCommand(cmd)
     validlist = parseOpenstackCmdOutput(lines)
-    return validlist
+    for vf in validlist:
+        ue = NovaUsageEntry(vf[0],
+                            vf[1],
+                            vf[2],
+                            vf[3],
+                            vf[4],
+                            )
+        ul.append(ue)
+    return ul
+
+
+
+#
+# Servers | RAM MB-Hours | CPU Hours | Disk GB-Hours
+#
+def printUsageList():
+    tl = getTenantList()    
+    indexbyid = {}
+    for t in tl:
+        indexbyid[t.tenantid] = t
+    ul = getUsageList()
+    for u in ul:
+        tname = indexbyid[u.tenantid]
+        # numservers, rammbhrs, cpuhrs, diskgbhrs
+        print('%s\t%s\t%s\t%s\t%s ' % (tname, 
+                                    u.numservers, 
+                                    u.rammbhrs, 
+                                    u.cpuhrs, 
+                                    u.diskgbhrs))
+
 
 
 def setupLogging():
@@ -112,15 +146,10 @@ def setupLogging():
     log.setLevel(logging.DEBUG)
 
 
-
     
 
 if __name__ == '__main__':
     setupLogging()
-    tl = getTenantList()    
-    for t in tl:
-        print(t)
-    ul = getUsageList()
-    for u in ul:
-        print(u)
+    printUsageList()
+
         

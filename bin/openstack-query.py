@@ -102,6 +102,8 @@ def getUsageList():
     cmd = 'nova usage-list'
     ul = []
     lines = runCommand(cmd)
+    # usage-list has one extra line at the top. 
+    lines=lines[1:]
     validlist = parseOpenstackCmdOutput(lines)
     for vf in validlist:
         log.debug("vf = %s" % vf)
@@ -113,8 +115,6 @@ def getUsageList():
                             )
         ul.append(ue)
     return ul
-
-
 
 #
 # Servers | RAM MB-Hours | CPU Hours | Disk GB-Hours

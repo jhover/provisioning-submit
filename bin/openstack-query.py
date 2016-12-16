@@ -126,7 +126,7 @@ def printUsageList():
         indexbyid[t.tenantid] = t
     ul = getUsageList()
     for u in ul:
-        tname = indexbyid[u.tenantid]
+        tname = indexbyid[u.tenantid].name
         # numservers, rammbhrs, cpuhrs, diskgbhrs
         print('%s\t%s\t%s\t%s\t%s ' % (tname, 
                                     u.numservers, 

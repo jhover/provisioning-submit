@@ -97,7 +97,6 @@ def getTenantList():
         tl.append(kt)
     return tl
 
-
 def getUsageList():
     log = logging.getLogger()
     cmd = 'nova usage-list'
@@ -105,6 +104,7 @@ def getUsageList():
     lines = runCommand(cmd)
     validlist = parseOpenstackCmdOutput(lines)
     for vf in validlist:
+        log.debug("vf = %s" % vf)
         ue = NovaUsageEntry(vf[0],
                             vf[1],
                             vf[2],

@@ -8,7 +8,7 @@ print("openstack-query")
 #
 #            CLASSES
 #
-class NovaUsageList(object):
+class NovaUsageEntry(object):
     def __init__(self, tenantid, numservers, rammbhrs, cpuhrs, diskgbhrs):
         self.tenantid = tenantid
         self.numservers = numservers
@@ -94,6 +94,14 @@ def getTenantList():
     
     return tl
 
+def getUsageList():
+    log = logging.getLogger()
+    cmd = 'nova usage-list'
+    lines = runCommand(cmd)
+    validlist = parseOpenstackCmdOutput(lines)
+    return validlist
+
+
 def setupLogging():
     log = logging.getLogger()
     formatstr="[%(levelname)s] %(asctime)s %(module)s.%(funcName)s(): %(message)s"
@@ -103,6 +111,8 @@ def setupLogging():
     log.addHandler(hdlr)
     log.setLevel(logging.DEBUG)
 
+
+
     
 
 if __name__ == '__main__':
@@ -110,4 +120,7 @@ if __name__ == '__main__':
     tl = getTenantList()    
     for t in tl:
         print(t)
+    ul = getUsageList()
+    for u in ul:
+        print(u)
         

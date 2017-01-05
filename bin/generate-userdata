@@ -3,7 +3,7 @@
 # Thin python library executable
 #
 EXEPKG=provisioning
-EXEBIN=generate-userdata.py
+EXEBIN=userdata.py
 
 ########## Do not edit below this line #############
 PYVER=`python -V 2>&1 | awk '{ print $2}' | awk -F '.' '{ print $1"."$2 }' `

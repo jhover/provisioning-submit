@@ -1,4 +1,4 @@
 files:
   "/etc/condor/password" : "condor-execute/etc/condor/password"
-  "/etc/condor/config.d/99collector.config" : "condor-execute/etc/condor/99collector.config"
+  "/etc/condor/config.d/99collector.config" : "condor-execute/etc/condor/config.d/99collector.config"
   "/etc/hiera/userdata.yaml" : "condor-execute/etc/hiera/userdata.yaml"

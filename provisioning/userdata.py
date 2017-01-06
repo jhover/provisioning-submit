@@ -5,11 +5,12 @@ from __future__ import print_function
 # Takes in yaml map OR a root directory, and embeds all files/paths within into
 # a cloud-init compatible userdata file  
 #
+#  For filemap.yaml:
 #  files:
 #     "/path/to/file/filename1.txt" : "local/relative/path/file.txt"
 #     "/path/to/file/filename2.txt" : "local/relative/path/file2.txt"
 # 
-#  PRODUCES --->
+#  Or for directory tree with files at /path/to/file/filename* under profile rootdir. 
 #
 #  #cloud-config
 #  write_files:
@@ -28,7 +29,6 @@ from __future__ import print_function
 #      content: |
 #        UGFjayBteSBib3ggd2l0aCBmaXZlIGRvemVuIGxpcXVvciBqdWdz
 #
-#! /usr/bin/env python
 
 __author__ = "John Hover"
 __copyright__ = "2016 John Hover"
@@ -86,18 +86,16 @@ class UserDataLib(object):
     def handledir(self, rootdir):
         self.log.debug("Handling directory %s" % rootdir)
         for dirpath, dirnames, filenames in os.walk(rootdir):
-            self.log.debug("Dirpath is %s" % dirpath)
-            for dirname in dirnames:
-                self.log.debug("Dirname is %s" % dirname)
             for filename in filenames:
-                self.log.debug("Filename is %s " % filename)
-
-        
-        
-        
-        
-        
-        
+                subpath = dirpath[len(rootdir):]
+                srcpath = os.path.join(dirpath,filename)
+                targetpath = os.path.join(subpath,filename) 
+                self.log.debug("Dirpath is %s, Filename is %s, %s , %s " % (dirpath, 
+                                                                   filename, 
+                                                                   srcpath,
+                                                                   targetpath
+                                                                   ))
+                self.filterfile(srcpath, targetpath)        
 
     def handlefile(self, filemap ):   
         self.log.debug("Handling file %s" % filemap)
@@ -117,20 +115,24 @@ class UserDataLib(object):
                 sourcefile = filepairs[targetfile]
                 self.log.debug("sourcefile = %s" % sourcefile)
                 sourcefile = os.path.join(profdir, sourcefile)
-                self.log.debug("Opening sourcefile %s" % sourcefile)
-                s = open(sourcefile, 'r')
-                self.outfileh.write("-   path: %s\n" % targetfile )
-                #of.write("    encoding: b64\n    owner: root:root\n    permissions: '0644'\n")
-                #
-                # Files may contain passwords, so maybe they should be readable only by root?
-                #
-                self.outfileh.write("    encoding: b64\n    owner: root:root\n    permissions: '0600'\n")
-                encoded = base64.b64encode(s.read())
-                self.outfileh.write("    content: %s\n\n" % encoded)
-                s.close()
-                self.log.debug("Finished with source %s dest %s" % (sourcefile, targetfile))
+                self.filterfile(sourcefile, targetfile)
         f.close()
         self.log.debug("Closed yaml file %s" % file)                
+
+
+    def filterfile(self, sourcefile, targetfile):
+        self.log.debug("Opening sourcefile %s" % sourcefile)
+        s = open(sourcefile, 'r')
+        self.outfileh.write("-   path: %s\n" % targetfile )
+        #of.write("    encoding: b64\n    owner: root:root\n    permissions: '0644'\n")
+        #
+        # Files may contain passwords, so maybe they should be readable only by root?
+        #
+        self.outfileh.write("    encoding: b64\n    owner: root:root\n    permissions: '0600'\n")
+        encoded = base64.b64encode(s.read())
+        self.outfileh.write("    content: %s\n\n" % encoded)
+        s.close()
+        self.log.debug("Finished with source %s dest %s" % (sourcefile, targetfile))
 
     
 def main():  

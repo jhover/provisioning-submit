@@ -85,6 +85,18 @@ class UserDataLib(object):
     
     def handledir(self, rootdir):
         self.log.debug("Handling directory %s" % rootdir)
+        for dirpath, dirnames, filenames in os.walk(rootdir):
+            self.log.debug("Dirpath is %s" % dirpath)
+            for dirname in dirnames:
+                self.log.debug("Dirname is %s" % dirname)
+            for filename in filenames:
+                self.log.debug("Filename is %s " % filename)
+
+        
+        
+        
+        
+        
         
 
     def handlefile(self, filemap ):   

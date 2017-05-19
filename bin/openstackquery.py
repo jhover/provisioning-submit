@@ -135,7 +135,6 @@ class QueryCLI(object):
             self.log.error("Exception: %s" % str(e))
             self.log.error("Exception: %s" % traceback.format_exc())
 
-
         try:
             tl = self.novaquery.getTenantList()
             print(tl)
@@ -153,6 +152,7 @@ class QueryCLI(object):
             self.log.error("Exception: %s" % traceback.format_exc())
 
         try:
+            print("Usage Stats:")
             s = self.novaquery.getUsageTable()
             print(s)
         except Exception, e:
@@ -270,11 +270,11 @@ class NovaQuery(object):
         for t in tl:
             indexbyid[t.tenantid] = t
         ul = self.getUsageList()
-        s = ""
+        s = "USER\tNSRV\tRAM\tCPU\tDISK\n"
         for u in ul:
             tname = indexbyid[u.tenantid].name
             # numservers, rammbhrs, cpuhrs, diskgbhrs
-            s += '%s\t%s\t%s\t%s\t%s ' % (tname, 
+            s += '%s\t%s\t%s\t%s\t%s\n' % (tname, 
                                         u.numservers, 
                                         u.rammbhrs, 
                                         u.cpuhrs, 

@@ -264,7 +264,7 @@ class NovaQuery(object):
     #
     # Servers | RAM MB-Hours | CPU Hours | Disk GB-Hours
     #
-    def getUsageTable():
+    def getUsageTable(self):
         tl = self.getTenantList()    
         indexbyid = {}
         for t in tl:

@@ -114,6 +114,8 @@ class QueryCLI(object):
             self.log.setLevel(logging.INFO)
         self.log.info('Logging initialized.')
 
+
+
  
     def doQuery(self):
         '''
@@ -265,6 +267,10 @@ class NovaQuery(object):
     # Servers | RAM MB-Hours | CPU Hours | Disk GB-Hours
     #
     def getUsageTable(self):
+        '''
+        Produces output for usagestats query. 
+        
+        '''
         tl = self.getTenantList()    
         indexbyid = {}
         for t in tl:
@@ -281,6 +287,31 @@ class NovaQuery(object):
                                         u.diskgbhrs)
         return s
 
+    def getInstanceTable(self):
+        '''
+        Produces output for occupancy query.
+        
+        instance    tenant    imagedesc    
+        
+         
+        
+        '''
+        tl = self.getTenantList()    
+        indexbyid = {}
+        for t in tl:
+            indexbyid[t.tenantid] = t
+        ul = self.getUsageList()
+        s = "USER\tNSRV\tRAM\tCPU\tDISK\n"
+        for u in ul:
+            tname = indexbyid[u.tenantid].name
+            # numservers, rammbhrs, cpuhrs, diskgbhrs
+            s += '%s\t%s\t%s\t%s\t%s\n' % (tname, 
+                                        u.numservers, 
+                                        u.rammbhrs, 
+                                        u.cpuhrs, 
+                                        u.diskgbhrs)
+        return s
+    
 
 if __name__ == '__main__':
     qcli = QueryCLI()

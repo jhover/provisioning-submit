@@ -14,24 +14,38 @@ class NovaUsageEntry(object):
         self.cpuhrs = cpuhrs
         self.diskgbhrs = diskgbhrs 
     
+    def __repr__(self):
+        s = "%s(" % self.__class__.__name__
+        for a in ['tenantid','numservers','rammbhrs','cpuhrs','diskgbhrs']:
+            s+="%s=%s " % (a, getattr(self, a, None)) 
+        s += ")"
+        return s   
+    
 class KeystoneTenant(object):
     def __init__(self, tenantid, name, enabled ):
         self.tenantid = tenantid
         self.name = name
         self.enabled = enabled
     
-    def __str__(self):
+    def __repr__(self):
         s = ""
-        s += "id=%s, name=%s" % (self.tenantid, self.name)
+        s += "KeystoneTenant(id=%s, name=%s)" % (self.tenantid, self.name)
         return s
 
 class NovaInstance(object):
     def __init__(self, instanceid, name, status, power, networks ):
-        self.id = ie
+        self.instanceid = instanceid
         self.name = name
         self.status = status
         self.power = power
         self.networks = networks
+
+    def __repr__(self):
+        s = "%s(" % self.__class__.__name__
+        for a in ['instanceid','name','status','power','networks']:
+            s+="%s=%s " % (a, getattr(self, a, None)) 
+        s += ")"
+        return s   
         
         
 class GlanceImage(object):
@@ -42,6 +56,13 @@ class GlanceImage(object):
         self.container = container
         self.size = size
         self.status = status
+
+    def __repr__(self):
+        s = "%s(" % self.__class__.__name__
+        for a in ['imageid','name','format','container','size','status']:
+            s+="%s=%s " % (a, getattr(self, a, None)) 
+        s += ")"
+        return s   
  
 
 # Core classes
@@ -111,25 +132,33 @@ class QueryCLI(object):
             print(hl)
         except Exception, e:
             self.log.error("failed getHypervisors")
+            self.log.error("Exception: %s" % str(e))
+            self.log.error("Exception: %s" % traceback.format_exc())
+
 
         try:
             tl = self.novaquery.getTenantList()
             print(tl)
         except Exception, e:
             self.log.error("failed getTenantList")
-
+            self.log.error("Exception: %s" % str(e))
+            self.log.error("Exception: %s" % traceback.format_exc())
+            
         try:
             ul = self.novaquery.getUsageList()
             print(ul)
         except Exception, e:
             self.log.error("failed getUsageList")
+            self.log.error("Exception: %s" % str(e))
+            self.log.error("Exception: %s" % traceback.format_exc())
 
         try:
             s = self.novaquery.getUsageTable()
             print(s)
         except Exception, e:
             self.log.error("failed getUsageTable")
-
+            self.log.error("Exception: %s" % str(e))
+            self.log.error("Exception: %s" % traceback.format_exc())
 
 class NovaQuery(object):
     

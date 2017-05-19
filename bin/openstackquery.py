@@ -255,5 +255,5 @@ class NovaQuery(object):
 
 if __name__ == '__main__':
     qcli = QueryCLI()
-    qcli.doquery()
+    qcli.doQuery()
       

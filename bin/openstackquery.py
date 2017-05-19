@@ -1,11 +1,11 @@
 #!/bin/env python
+import argparse
 import logging
 import subprocess
 import sys
 import traceback
 
-print("openstack-query")
-
+# Utilitiy classes
 class NovaUsageEntry(object):
     def __init__(self, tenantid, numservers, rammbhrs, cpuhrs, diskgbhrs):
         self.tenantid = tenantid
@@ -44,6 +44,7 @@ class GlanceImage(object):
         self.status = status
  
 
+# Core classes
 class QueryCLI(object):
     def __init__(self):
         self.parseopts()
@@ -230,8 +231,7 @@ class NovaQuery(object):
         '''
         cmd = 'nova hypervisor-list'
     
-    
-    
+
     #
     # Servers | RAM MB-Hours | CPU Hours | Disk GB-Hours
     #
@@ -252,13 +252,8 @@ class NovaQuery(object):
                                         u.diskgbhrs)
         return s
 
-  
 
 if __name__ == '__main__':
-
     qcli = QueryCLI()
     qcli.doquery()
-
-
-
-        
+      

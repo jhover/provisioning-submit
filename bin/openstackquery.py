@@ -276,14 +276,14 @@ class NovaQuery(object):
         for t in tl:
             indexbyid[t.tenantid] = t
         ul = self.getUsageList()
-        s = "USER\tNSRV\tRAM\tCPU\tDISK\n"
+        s = "USER\tNSRV\tCPUHRS \tRAM\tDISK\n"
         for u in ul:
             tname = indexbyid[u.tenantid].name
             # numservers, rammbhrs, cpuhrs, diskgbhrs
             s += '%s\t%s\t%s\t%s\t%s\n' % (tname, 
                                         u.numservers, 
-                                        u.rammbhrs, 
                                         u.cpuhrs, 
+                                        u.rammbhrs, 
                                         u.diskgbhrs)
         return s
 
@@ -305,7 +305,7 @@ class NovaQuery(object):
         for u in ul:
             tname = indexbyid[u.tenantid].name
             # numservers, rammbhrs, cpuhrs, diskgbhrs
-            s += '%s\t%s\t%s  \t%s  \t%s\n' % (tname, 
+            s += '%s\t%s\t%s\t%s\t%s\n' % (tname, 
                                         u.numservers, 
                                         u.cpuhrs, 
                                         u.rammbhrs, 
